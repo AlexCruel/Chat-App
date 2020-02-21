@@ -14,7 +14,8 @@ const locationTemplate = document.querySelector('#location-template').innerHTML
 socket.on('message', (message) => {
     console.log(message)
     const html = Mustache.render(messageTemplate, {
-        message
+        message: message.text,
+        createdAt: moment(message.createdAt).format('HH:mm')
     })
     $messages.insertAdjacentHTML('beforeend', html)
 })
@@ -32,14 +33,12 @@ $messageForm.addEventListener('submit', (e) => {
 
     $messageFormButton.setAttribute('disabled', 'disabled')
 
-    // disable
     const message = e.target.elements.message.value
 
     socket.emit('sendMessage', message, (error) => {
         $messageFormButton.removeAttribute('disabled')
         $messageFormInput.value = ''
         $messageFormInput.focus()
-            // enable
 
         if (error) {
             return console.log(error)
